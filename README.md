@@ -11,7 +11,9 @@ npm ci
 npm run dev
 ```
 
-`npm run dev` serves the Astro development site. `npm run build` also generates the hosting headers, robots file, social card, and icons. `npm run preview` uses Wrangler to serve the built files with Cloudflare routing and headers at http://127.0.0.1:4322.
+`npm run dev` serves the Astro development site. `npm run build` produces the production site for **https://www.ytthumbnaildownloader.org**, including sitemap.xml, hosting headers, robots.txt, a social card, and icons. `npm run preview` uses Wrangler to serve the built files locally with Cloudflare routing and headers at http://127.0.0.1:4322.
+
+Source repository: https://github.com/achelie/yt-thumbnail-downloader
 
 ## Validation
 
@@ -26,9 +28,9 @@ The tests cover accepted and rejected URLs, missing high-resolution thumbnails, 
 
 Known dependency advisory (checked October 3, 2026): Astro's build dependency `http-cache-semantics@4.2.0` has an [unpatched upstream advisory](https://github.com/advisories/GHSA-ch52-4w7c-c8xp). This site does not use Astro remote image processing, server rendering, or shared application caches; the dependency is not present in the deployed static assets. The advisory remains in `npm audit`; do not use its suggested major Astro downgrade as an automatic fix. Reassess before introducing server rendering or when an upstream patch is available.
 
-## Deploy to Cloudflare
+## Temporary Cloudflare deployment
 
-The configured Worker is `yt-thumbnail-downloader`; only static assets in `dist` are uploaded. The temporary public URL is:
+The configured Worker is `yt-thumbnail-downloader`; only static assets in `dist` are uploaded. Until the production domain is explicitly attached, keep the existing temporary site in noindex mode:
 
 https://yt-thumbnail-downloader.x771364026.workers.dev
 
@@ -49,21 +51,23 @@ Wrangler uses its locally stored OAuth credentials. Do not commit credentials or
 
 ## Indexing configuration
 
-`SITE_URL` and `INDEXABLE` are build-time environment variables read in `src/lib/site.ts`. Their defaults match the temporary hostname and disabled indexing. `.env.example` documents these values; export them in the shell when changing builds.
+`SITE_URL` and `INDEXABLE` are build-time environment variables read in `src/lib/site.ts`. The default origin is **https://www.ytthumbnaildownloader.org**, and indexing defaults to enabled only for that exact origin. `.env.example` documents the production values; export variables in the shell when changing builds. Non-production origins cannot be explicitly made indexable.
+
+The production sitemap is maintained in `public/sitemap.xml` and copied to `/sitemap.xml` during the build. It includes only the homepage, About, Privacy, and Terms pages, with absolute www URLs. The production robots.txt announces `https://www.ytthumbnaildownloader.org/sitemap.xml`. The SEO audit verifies every sitemap URL against the page canonicals. Add new indexable pages to the sitemap and audit together; do not include the 404 page or thumbnail query results.
 
 With indexing disabled, every HTML page has `noindex, nofollow`, `_headers` applies the same directive, robots.txt allows crawling, and no sitemap is generated. Allowing crawling lets search engines read `noindex`. Canonical and social URLs use the configured temporary origin.
 
-Future production domain: **https://ytthumbnaildownloader.org**. Domain binding, DNS changes, and Search Console submission have not been performed.
+Production domain: **https://www.ytthumbnaildownloader.org**. Domain binding, DNS changes, and Search Console submission have not been performed. The repository is ready for this domain; its production build does not by itself attach or deploy the domain.
 
 When the production domain is ready:
 
-1. Bind the domain to this Worker in Cloudflare and verify HTTPS.
-2. Set `workers_dev: false` and `preview_urls: false` in `wrangler.jsonc` before publishing an indexable build, and verify the corresponding temporary routes are disabled in Cloudflare. This keeps later deployments from restoring duplicate indexable hostnames.
-3. Set `SITE_URL=https://ytthumbnaildownloader.org` and `INDEXABLE=true`, then run the validation commands and deploy. The build deliberately refuses an indexable build for any other origin.
+1. When domain activation is requested, add `"routes": [{ "pattern": "www.ytthumbnaildownloader.org", "custom_domain": true }]` to `wrangler.jsonc` to attach the production hostname to this Worker.
+2. At that final production switch, set `workers_dev: false` and `preview_urls: false` in `wrangler.jsonc`, and verify the corresponding temporary routes are disabled in Cloudflare. Do not change these while the temporary site is still the active release.
+3. Set `SITE_URL=https://www.ytthumbnaildownloader.org` and `INDEXABLE=true` (or use the production defaults), then run the validation commands and `npm run deploy`. The deployment command audits the build and refuses indexable deployments while the configuration still targets the temporary hostname.
 4. Verify the production canonical URLs, absent global noindex header, expected page statuses, and sitemap.xml. The 404 page remains noindex.
 5. Only then submit the production sitemap to Search Console.
 
-These steps are documentation, not part of the temporary-domain release.
+These steps are documentation. Uploading the repository or building sitemap.xml does not execute the domain switch. The bare domain `ytthumbnaildownloader.org` is not the canonical production hostname; any future bare-domain redirect should point to www.
 
 ## Thumbnail behavior
 

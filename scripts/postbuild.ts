@@ -18,10 +18,8 @@ const headerLines = [
   '',
 ];
 await writeFile('dist/_headers', headerLines.join('\n'));
-if (INDEXABLE) {
-  const urls = ['/', '/about/', '/privacy/', '/terms/'];
-  await writeFile('dist/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(path => `<url><loc>${SITE_URL}${path}</loc></url>`).join('')}</urlset>\n`);
-} else {
+// Astro copies the production sitemap from public/. Preview builds omit it.
+if (!INDEXABLE) {
   await rm('dist/sitemap.xml', { force: true });
 }
 await sharp('public/favicon.svg').resize(32, 32).png().toFile('dist/favicon.png');
