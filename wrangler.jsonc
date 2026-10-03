@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yt-thumbnail-downloader",
+  "account_id": "cd703f1d3e75982d707ed8956aaf0796",
+  "compatibility_date": "2026-10-03",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

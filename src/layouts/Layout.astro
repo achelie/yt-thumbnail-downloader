@@ -1,0 +1,54 @@
+---
+import '../styles/global.css';
+import { absoluteUrl, INDEXABLE, SITE_NAME } from '../lib/site';
+interface Props { title: string; description: string; noindex?: boolean; }
+const { title, description, noindex = false } = Astro.props;
+const canonical = absoluteUrl(Astro.url.pathname);
+const isHome = Astro.url.pathname === '/';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#fafaf9" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={!INDEXABLE || noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={absoluteUrl('/social-card.png')} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="YT Thumbnail Downloader — Paste a YouTube link. Get the original thumbnail." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header container">
+      <a href="/" class="brand" aria-label="YT Thumbnail Downloader home">
+        <svg class="brand-mark" width="31" height="31" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="3" y="4" width="23" height="18" rx="5" stroke="currentColor" stroke-width="2"/><path d="m12 9 7 4-7 4V9Z" fill="currentColor"/><path d="M10 27h13a6 6 0 0 0 6-6v-8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>YT<span class="brand-light">Thumbnail</span><span class="brand-dot">.</span></span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="/" class:list={[{ active: isHome }]} aria-current={isHome ? 'page' : undefined}>Downloader</a>
+        <a href="/#how-it-works">How it works</a>
+        <a href="/#faq">FAQ</a>
+      </nav>
+      <a class="header-about" href="/about/">About <span aria-hidden="true">↗</span></a>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer container">
+      <div><a class="footer-brand" href="/">YT Thumbnail Downloader<span class="brand-dot">.</span></a><p>A little tool for the bigger picture.</p></div>
+      <div class="footer-right"><nav aria-label="Footer navigation"><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></nav><p>Independent tool. Not affiliated with YouTube.</p></div>
+    </footer>
+  </body>
+</html>

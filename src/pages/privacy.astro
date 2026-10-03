@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Privacy – YT Thumbnail Downloader"
+  description="How YT Thumbnail Downloader handles video links, image requests, clipboard access, and hosting data."
+>
+  <section class="document-page">
+    <a class="back-link" href="/">← Back to downloader</a>
+    <p class="eyebrow">Privacy</p>
+    <h1>What happens to your link.</h1>
+    <p class="document-lead">The downloader runs in your browser. We do not maintain accounts, save a search history, or send your pasted link to an application server.</p>
+
+    <h2>Video links and image requests</h2>
+    <p>Your browser parses the link you enter to extract a YouTube video ID. To find and display thumbnails, it requests images directly from <strong>i.ytimg.com</strong>, YouTube’s image CDN. The video ID is part of each image URL.</p>
+    <p>Those requests expose standard connection information, such as your IP address, to the image provider. YouTube and Google handle their services under their own privacy policies. Pasting a link here does not make the request anonymous.</p>
+
+    <h2>Local browser actions</h2>
+    <p>We do not save your entered link or thumbnail history in cookies, local storage, or a database. The current result remains in page memory while the page is open. Your browser may cache images or keep a downloaded file according to its own settings.</p>
+    <p>The copy-image-link button writes the selected image URL to your clipboard only when you click it. The tool does not read your clipboard.</p>
+
+    <h2>Hosting and site data</h2>
+    <p>Cloudflare hosts this site and may process standard request logs and connection information to deliver and secure it. Hosting requests are separate from the thumbnail requests your browser sends to YouTube’s image CDN.</p>
+    <p>This version has no advertising, third-party analytics scripts, sign-in, or application cookies. Infrastructure providers may process information under their own policies.</p>
+
+    <h2>Policy updates</h2>
+    <p>If the way this tool handles data changes, this page will be updated to describe it.</p>
+    <p class="document-updated">Last updated: October 3, 2026.</p>
+  </section>
+</Layout>
