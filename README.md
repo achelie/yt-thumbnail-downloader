@@ -28,17 +28,19 @@ The tests cover accepted and rejected URLs, missing high-resolution thumbnails, 
 
 Known dependency advisory (checked October 3, 2026): Astro's build dependency `http-cache-semantics@4.2.0` has an [unpatched upstream advisory](https://github.com/advisories/GHSA-ch52-4w7c-c8xp). This site does not use Astro remote image processing, server rendering, or shared application caches; the dependency is not present in the deployed static assets. The advisory remains in `npm audit`; do not use its suggested major Astro downgrade as an automatic fix. Reassess before introducing server rendering or when an upstream patch is available.
 
-## Temporary Cloudflare deployment
+## Production Cloudflare deployment
 
-The configured Worker is `yt-thumbnail-downloader`; only static assets in `dist` are uploaded. Until the production domain is explicitly attached, keep the existing temporary site in noindex mode:
+The configured Worker is `yt-thumbnail-downloader`; only static assets in `dist` are uploaded. The production custom domain is attached in `wrangler.jsonc`:
 
-https://yt-thumbnail-downloader.x771364026.workers.dev
+https://www.ytthumbnaildownloader.org
 
 ```powershell
-$env:SITE_URL = 'https://yt-thumbnail-downloader.x771364026.workers.dev'
-$env:INDEXABLE = 'false'
+$env:SITE_URL = 'https://www.ytthumbnaildownloader.org'
+$env:INDEXABLE = 'true'
 npm run deploy
 ```
+
+The `workers.dev` route and version preview URLs are disabled to avoid duplicate indexable hostnames. `npm run deploy` builds, audits the output, and checks the hosting configuration before uploading. It refuses preview-mode builds for the attached production domain, because those builds intentionally omit sitemap.xml and set noindex.
 
 If the local network cannot reach the Cloudflare API directly, use the existing local proxy for this shell session:
 
@@ -57,17 +59,17 @@ The production sitemap is maintained in `public/sitemap.xml` and copied to `/sit
 
 With indexing disabled, every HTML page has `noindex, nofollow`, `_headers` applies the same directive, robots.txt allows crawling, and no sitemap is generated. Allowing crawling lets search engines read `noindex`. Canonical and social URLs use the configured temporary origin.
 
-Production domain: **https://www.ytthumbnaildownloader.org**. Domain binding, DNS changes, and Search Console submission have not been performed. The repository is ready for this domain; its production build does not by itself attach or deploy the domain.
+Production domain: **https://www.ytthumbnaildownloader.org**. Its existing Cloudflare custom-domain binding is preserved by the deployment configuration. Search Console submission has not been performed.
 
-When the production domain is ready:
+After a production deployment, verify:
 
-1. When domain activation is requested, add `"routes": [{ "pattern": "www.ytthumbnaildownloader.org", "custom_domain": true }]` to `wrangler.jsonc` to attach the production hostname to this Worker.
-2. At that final production switch, set `workers_dev: false` and `preview_urls: false` in `wrangler.jsonc`, and verify the corresponding temporary routes are disabled in Cloudflare. Do not change these while the temporary site is still the active release.
-3. Set `SITE_URL=https://www.ytthumbnaildownloader.org` and `INDEXABLE=true` (or use the production defaults), then run the validation commands and `npm run deploy`. The deployment command audits the build and refuses indexable deployments while the configuration still targets the temporary hostname.
-4. Verify the production canonical URLs, absent global noindex header, expected page statuses, and sitemap.xml. The 404 page remains noindex.
-5. Only then submit the production sitemap to Search Console.
+1. `/sitemap.xml` returns HTTP 200 with XML containing the four www URLs.
+2. `/robots.txt` allows crawling and announces the production sitemap.
+3. The four public pages use www canonical URLs and have no noindex directive in their HTML or response headers.
+4. A nonexistent URL returns a real 404, with the 404 page still marked noindex.
+5. Only then submit the production sitemap to Search Console if requested.
 
-These steps are documentation. Uploading the repository or building sitemap.xml does not execute the domain switch. The bare domain `ytthumbnaildownloader.org` is not the canonical production hostname; any future bare-domain redirect should point to www.
+The bare domain `ytthumbnaildownloader.org` is not the canonical production hostname; any future bare-domain redirect should point to www. For local noindex builds, set `INDEXABLE=false` and use `npm run build` followed by `npm run preview`; the deployment guard prevents publishing those assets over production.
 
 ## Thumbnail behavior
 
