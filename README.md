@@ -1,6 +1,6 @@
 # YT Thumbnail Downloader
 
-English, browser-only YouTube thumbnail downloader built with Astro, TypeScript, and CSS. The page content is statically rendered. No API keys, database, server functions, accounts, analytics, or application cookies.
+English, browser-only YouTube thumbnail downloader built with Astro, TypeScript, and CSS. The page content is statically rendered. No API keys, database, server functions, or accounts. Microsoft Clarity provides visitor-interaction analytics.
 
 ## Development
 
@@ -78,3 +78,9 @@ URLs are validated against explicit YouTube hostnames and converted to an 11-cha
 Downloads reuse the original Blob URL and use the filename `youtube-{id}-{width}x{height}.jpg`. If CORS prevents reading the response but the image is viewable, the UI offers opening the image for manual saving. There is a 12-second request deadline; newer lookups cancel older ones. Blob URLs are released when results are cleared or the page closes. No image upscaling, cropping, or video downloads are performed.
 
 The YouTube CDN filenames are an external convention and can change. The site does not guarantee HD availability or ownership/reuse rights. The default page makes no requests to YouTube until a lookup or example is submitted.
+
+## Microsoft Clarity
+
+The standard asynchronous Microsoft Clarity snippet is included in the shared `src/layouts/Layout.astro` for project **ys07qa7u86**, so it loads across the site without an additional npm dependency. Clarity loads independently of thumbnail lookups.
+
+Clarity helps understand visitor interactions through heatmaps and session replay. It may use cookies and collect usage, device, browser, and interaction information, including page content and interactions. The public privacy page at `/privacy/` discloses this integration and links to the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement).

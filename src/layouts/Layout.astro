@@ -29,6 +29,13 @@ const isHome = Astro.url.pathname === '/';
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="YT Thumbnail Downloader — Paste a YouTube link. Get the original thumbnail." />
     <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "ys07qa7u86");
+    </script>
     <slot name="head" />
   </head>
   <body>
