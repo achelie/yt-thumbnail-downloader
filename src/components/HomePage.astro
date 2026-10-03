@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { absoluteUrl } from '../lib/site';
+import { translations } from '../i18n/index';
+import { locales, pagePath } from '../i18n/routes';
+import type { Locale } from '../i18n/types';
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const { home: h, seo, client } = translations[locale];
+const config = locales.find(({ id }) => id === locale)!;
+const qualities = ['maxres', 'standard', 'high', 'medium'] as const;
+const sizes = ['1280 × 720', '640 × 480', '480 × 360', '320 × 180'];
+const schema = { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'YT Thumbnail Downloader', url: absoluteUrl(pagePath(locale)), inLanguage: config.lang, applicationCategory: 'MultimediaApplication', operatingSystem: 'Any', description: seo.description, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } };
+---
+<Layout title={seo.title} description={seo.description} locale={locale} page="home">
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <section class="hero container" aria-labelledby="page-title">
+    <p class="eyebrow hero-eyebrow"><span class="status-dot" aria-hidden="true"></span> {h.eyebrow}</p>
+    <h1 id="page-title">{h.h1}<span class="brand-dot">.</span></h1>
+    <p class="hero-subtitle">{h.subtitle}</p>
+    <p class="hero-description">{h.description}</p>
+
+    <div class="tool-card">
+      <div class="tool-heading"><span class="tool-icon" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="m10 8 5 3-5 3V8Z" fill="currentColor"/><path d="M8 21h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div><h2>{h.toolTitle}</h2><p>{h.toolDescription}</p></div></div>
+      <form id="downloader-form" novalidate>
+        <label for="video-url">{h.inputLabel}</label>
+        <div class="input-row"><div class="url-input-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m10 13 4-4m-6 7-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 1 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(1 0)" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><input id="video-url" name="video" type="text" inputmode="url" placeholder={h.inputPlaceholder} autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="url-error input-help" /></div><button class="button button-primary" id="get-thumbnails" type="submit">{h.submit} <span aria-hidden="true">→</span></button></div>
+        <p id="url-error" class="field-error" hidden></p>
+        <div class="input-footer"><p id="input-help">{h.inputHelp}</p><button id="try-example" class="text-button" type="button">{h.example} <span aria-hidden="true">↗</span></button></div>
+      </form>
+      <p id="downloader-status" class="tool-status" role="status" aria-live="polite"></p>
+      <noscript><p class="notice">{h.noscript}</p></noscript>
+    </div>
+    <div class="trust-row"><span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 10 3 3 7-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>{h.trust[0]}</span><span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 10 3 3 7-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>{h.trust[1]}</span><span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 10 3 3 7-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>{h.trust[2]}</span></div>
+  </section>
+
+  <section id="thumbnail-results" class="results container" hidden aria-labelledby="results-title">
+    <div class="section-topline"><div><p class="eyebrow">{h.resultsEyebrow}</p><h2 id="results-title">{h.resultsTitle}<span class="brand-dot">.</span></h2></div><button id="clear-thumbnail" class="text-button" type="button">{h.clear} <span aria-hidden="true">×</span></button></div>
+    <div class="result-grid"><div class="preview-surface"><img id="thumbnail-preview" alt={h.previewAlt} /></div><div class="result-controls"><div class="result-current"><span class="eyebrow" id="thumbnail-quality"></span><p id="thumbnail-dimensions"></p><span class="file-type">{h.fileType}</span></div><div class="quality-heading">{h.chooseSize}</div><div id="quality-options" role="group" aria-label={h.chooseSize}></div><a id="download-thumbnail" class="button button-primary" href="#">{h.download}</a><div class="result-actions"><a id="open-thumbnail" href="#" target="_blank" rel="noopener noreferrer">{h.open} ↗</a><button id="copy-thumbnail-link" class="text-button" type="button">{h.copy}</button></div><p class="save-hint">{h.saveHint}</p><div id="copy-link-fallback" hidden><label for="thumbnail-link">{h.copyLabel}</label><input id="thumbnail-link" type="text" readonly /></div></div></div>
+  </section>
+
+  <section class="how-section container section-space" id="how-it-works" aria-labelledby="how-title">
+    <div class="section-intro"><p class="eyebrow">{h.howEyebrow}</p><h2 id="how-title">{h.howTitle}</h2><p>{h.howIntro}</p></div>
+    <ol class="steps">{h.steps.map((step, index) => <li><span class="step-number">{String(index + 1).padStart(2, "0")}</span><h3>{step.title}</h3><p>{step.body}</p></li>)}</ol>
+  </section>
+
+  <section class="sizes-section container section-space" aria-labelledby="sizes-title">
+    <div class="sizes-panel"><div class="sizes-intro"><p class="eyebrow">{h.sizesEyebrow}</p><h2 id="sizes-title">{h.sizesTitle}</h2><p>{h.sizesIntro}</p><div class="size-illustration" aria-hidden="true"><div class="frame-large"><span>1280 × 720</span><div class="frame-small"><span>320 × 180</span></div></div></div></div><div class="sizes-table-wrap"><table class="sizes-table"><caption>{h.tableCaption}</caption><thead><tr><th scope="col">{h.qualityColumn}</th><th scope="col">{h.sizeColumn}</th></tr></thead><tbody>{qualities.map((quality, index) => <tr><th scope="row">{client.qualities[quality]} {index === 0 && <span class="tag">HD</span>}</th><td>{sizes[index]}</td></tr>)}</tbody></table><p class="table-note"><span aria-hidden="true">ⓘ</span> {h.sizesNote}</p><p class="size-footnote">{h.sizesFootnote}</p></div></div>
+  </section>
+
+  <section class="faq-section container section-space" id="faq" aria-labelledby="faq-title"><div class="section-intro"><p class="eyebrow">{h.faqEyebrow}</p><h2 id="faq-title">{h.faqTitle}</h2><p>{h.faqIntro}</p></div><div class="faq-list">{h.faqs.map(({question, answer, privacyLink}) => <details><summary>{question}<span class="faq-toggle" aria-hidden="true"></span></summary><p>{answer}{privacyLink && <> <a href={pagePath(locale, "privacy")}>{h.privacyLink}</a></>}</p></details>)}</div></section>
+  <div class="closing-note container"><span class="status-dot" aria-hidden="true"></span> {h.closing}</div>
+<script id="downloader-messages" type="application/json" set:html={JSON.stringify(client).replace(/</g, "\\u003c")} />
+</Layout>
+<script>
+  import '../scripts/downloader';
+</script>

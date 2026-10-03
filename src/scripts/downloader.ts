@@ -5,10 +5,15 @@ import {
   selectBestThumbnail,
   type LoadedThumbnail,
 } from '../lib/thumbnail.ts';
+import type { LocaleContent } from '../i18n/types.ts';
+import { formatMessage } from '../i18n/format.ts';
 
 export function initializeDownloader(): void {
   const form = document.querySelector<HTMLFormElement>('#downloader-form');
   if (!form || form.dataset.downloaderReady === 'true') return;
+  const messages = document.querySelector('#downloader-messages');
+  if (!messages?.textContent) return;
+  const t = JSON.parse(messages.textContent) as LocaleContent['client'];
   const input = document.querySelector<HTMLInputElement>('#video-url');
   const submit = document.querySelector<HTMLButtonElement>('#get-thumbnails');
   const inputError = document.querySelector<HTMLElement>('#url-error');
@@ -31,7 +36,6 @@ export function initializeDownloader(): void {
   status.setAttribute('aria-live', 'polite');
   status.setAttribute('aria-atomic', 'true');
   options.setAttribute('role', 'group');
-  options.setAttribute('aria-label', 'Available thumbnail sizes');
   linkInput.readOnly = true;
   const defaultSubmitContent = Array.from(submit.childNodes, (node) => node.cloneNode(true));
   const defaultCopyContent = Array.from(copy.childNodes, (node) => node.cloneNode(true));
@@ -54,7 +58,7 @@ export function initializeDownloader(): void {
   const setLoading = (loading: boolean) => {
     form.setAttribute('aria-busy', String(loading));
     submit.dataset.loading = String(loading);
-    if (loading) submit.textContent = 'Loading thumbnails…';
+    if (loading) submit.textContent = t.loading;
     else submit.replaceChildren(...defaultSubmitContent.map((node) => node.cloneNode(true)));
   };
   const clearError = () => {
@@ -89,11 +93,11 @@ export function initializeDownloader(): void {
     selected = thumbnail;
     preview.referrerPolicy = 'no-referrer';
     preview.src = thumbnail.objectUrl || thumbnail.url;
-    preview.alt = `YouTube video thumbnail for ${thumbnail.videoId}, ${thumbnail.width} by ${thumbnail.height} pixels`;
+    preview.alt = formatMessage(t.previewAlt, { id: thumbnail.videoId, width: thumbnail.width, height: thumbnail.height });
     preview.width = thumbnail.width;
     preview.height = thumbnail.height;
     dimensions.textContent = `${thumbnail.width} × ${thumbnail.height}`;
-    quality.textContent = thumbnail.label;
+    quality.textContent = t.qualities[thumbnail.quality];
     open.href = thumbnail.url;
     open.target = '_blank';
     open.rel = 'noopener noreferrer';
@@ -102,12 +106,12 @@ export function initializeDownloader(): void {
     download.href = thumbnail.objectUrl || thumbnail.url;
     if (thumbnail.objectUrl) {
       download.download = `youtube-${thumbnail.videoId}-${thumbnail.width}x${thumbnail.height}.jpg`;
-      download.textContent = 'Download JPG';
+      download.textContent = t.download;
       download.removeAttribute('target');
       download.removeAttribute('rel');
     } else {
       download.removeAttribute('download');
-      download.textContent = 'Open image to save';
+      download.textContent = t.openToSave;
       download.target = '_blank';
       download.rel = 'noopener noreferrer';
     }
@@ -115,9 +119,9 @@ export function initializeDownloader(): void {
       button.setAttribute('aria-pressed', String(button.dataset.quality === thumbnail.quality));
     });
     if (announceSelection) {
-      announce(thumbnail.objectUrl
-        ? `${thumbnail.label} selected: ${thumbnail.width} × ${thumbnail.height} pixels. Ready to download.`
-        : `${thumbnail.label} preview ready: ${thumbnail.width} × ${thumbnail.height} pixels. Open the image to save it in your browser.`);
+      announce(formatMessage(thumbnail.objectUrl ? t.selected : t.selectedFallback, {
+        quality: t.qualities[thumbnail.quality], width: thumbnail.width, height: thumbnail.height,
+      }));
     }
   };
 
@@ -128,11 +132,11 @@ export function initializeDownloader(): void {
     clearResults();
     const parsed = parseVideoInput(input.value);
     if (!parsed.ok) {
-      inputError.textContent = parsed.error;
+      inputError.textContent = t.invalidInput;
       inputError.hidden = false;
       input.setAttribute('aria-invalid', 'true');
       input.setAttribute('aria-describedby', [...new Set(`${inputDescription} url-error`.trim().split(/\s+/))].join(' '));
-      announce(parsed.error);
+      announce(t.invalidInput);
       input.focus();
       return;
     }
@@ -141,7 +145,7 @@ export function initializeDownloader(): void {
     activeController = new AbortController();
     const controller = activeController;
     setLoading(true);
-    announce('Checking the available thumbnail sizes…');
+    announce(t.checking);
     try {
       const batch = await fetchThumbnails(parsed.videoId, { signal: controller.signal });
       if (requestId !== currentRequest || controller.signal.aborted) {
@@ -151,9 +155,7 @@ export function initializeDownloader(): void {
       thumbnails = batch.thumbnails;
       const best = selectBestThumbnail(thumbnails);
       if (!best) {
-        announce(batch.timedOut
-          ? 'The request timed out. Check your connection and try again.'
-          : 'No thumbnail could be loaded. Check the video link and your connection, then try again.');
+        announce(batch.timedOut ? t.timeout : t.noResults);
         return;
       }
       thumbnails.forEach((thumbnail) => {
@@ -164,7 +166,7 @@ export function initializeDownloader(): void {
         button.setAttribute('aria-pressed', 'false');
         const name = document.createElement('span');
         name.className = 'quality-option-name';
-        name.textContent = thumbnail.label;
+        name.textContent = t.qualities[thumbnail.quality];
         const size = document.createElement('span');
         size.className = 'quality-option-size';
         size.textContent = `${thumbnail.width} × ${thumbnail.height}`;
@@ -174,10 +176,9 @@ export function initializeDownloader(): void {
       });
       selectThumbnail(best, false);
       results.hidden = false;
-      const count = `${thumbnails.length} thumbnail ${thumbnails.length === 1 ? 'size' : 'sizes'} found.`;
-      announce(best.objectUrl
-        ? `${count} The largest available image is selected: ${best.width} × ${best.height} pixels. Ready to download.`
-        : `${count} Preview ready. Open the image to save it in your browser.`);
+      announce(formatMessage(best.objectUrl ? t.found : t.foundFallback, {
+        count: thumbnails.length, width: best.width, height: best.height,
+      }));
       if (results.getBoundingClientRect().top > window.innerHeight * (2 / 3)) {
         results.scrollIntoView({
           block: 'start',
@@ -186,7 +187,7 @@ export function initializeDownloader(): void {
       }
     } catch (error) {
       if (currentRequest !== requestId || controller.signal.aborted) return;
-      announce('The thumbnails could not be loaded. Check your connection and try again.');
+      announce(t.networkError);
     } finally {
       if (currentRequest === requestId) {
         activeController = null;
@@ -206,12 +207,12 @@ export function initializeDownloader(): void {
       await navigator.clipboard.writeText(imageUrl);
       if (copyAttemptId !== currentCopyAttempt || selected?.url !== imageUrl) return;
       copyFallback.hidden = true;
-      copy.textContent = 'Copied';
+      copy.textContent = t.copied;
       copy.dataset.copied = 'true';
       copyFeedbackTimer = window.setTimeout(() => {
         if (copyAttemptId === currentCopyAttempt) resetCopyFeedback();
       }, 1800);
-      announce('Image link copied.');
+      announce(t.copySuccess);
     } catch {
       if (copyAttemptId !== currentCopyAttempt || selected?.url !== imageUrl) return;
       copyFallback.hidden = false;
@@ -219,7 +220,7 @@ export function initializeDownloader(): void {
       linkInput.focus();
       linkInput.select();
       linkInput.setSelectionRange(0, imageUrl.length);
-      announce('Copy is unavailable. The image link is selected below; copy it manually.');
+      announce(t.copyFailed);
     }
   });
   document.querySelector<HTMLButtonElement>('#clear-thumbnail')?.addEventListener('click', () => {
@@ -227,7 +228,7 @@ export function initializeDownloader(): void {
     clearResults();
     clearError();
     input.value = '';
-    announce('Ready for another YouTube video link.');
+    announce(t.reset);
     input.focus();
   });
   document.querySelector<HTMLButtonElement>('#try-example')?.addEventListener('click', () => {

@@ -1,0 +1,15 @@
+---
+import { locales, publicPages } from '../../i18n/routes';
+import type { Locale, PageId } from '../../i18n/types';
+import HomePage from '../../components/HomePage.astro';
+import DocumentPage from '../../components/DocumentPage.astro';
+export function getStaticPaths() {
+  return locales.filter(({ id }) => id !== 'en').flatMap(({ id }) => [...publicPages, 'notFound' as const].map((page) => ({
+    params: { locale: id, page: page === 'home' ? undefined : page === 'notFound' ? '404' : page },
+    props: { locale: id, page },
+  })));
+}
+interface Props { locale: Locale; page: PageId; }
+const { locale, page } = Astro.props;
+---
+{page === 'home' ? <HomePage locale={locale} /> : <DocumentPage locale={locale} page={page} />}

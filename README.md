@@ -1,6 +1,6 @@
 # YT Thumbnail Downloader
 
-English, browser-only YouTube thumbnail downloader built with Astro, TypeScript, and CSS. The page content is statically rendered. No API keys, database, server functions, or accounts. Microsoft Clarity provides visitor-interaction analytics.
+Browser-only YouTube thumbnail downloader built with Astro, TypeScript, and CSS, available in 10 languages. The tool, About, Privacy, and Terms pages are statically rendered in every language: 40 public pages, plus 10 localized noindex error documents. No API keys, database, server functions, or accounts. Microsoft Clarity provides visitor-interaction analytics.
 
 ## Development
 
@@ -15,6 +15,31 @@ npm run dev
 
 Source repository: https://github.com/achelie/yt-thumbnail-downloader
 
+## Languages and routes
+
+The English pages keep their existing root URLs. The other languages use directory prefixes:
+
+| Language | HTML / hreflang code | Homepage |
+| --- | --- | --- |
+| English | `en` | `/` |
+| 日本語 | `ja` | `/ja/` |
+| Español | `es` | `/es/` |
+| Français | `fr` | `/fr/` |
+| Deutsch | `de` | `/de/` |
+| Italiano | `it` | `/it/` |
+| 한국어 | `ko` | `/ko/` |
+| Português (Brasil) | `pt-BR` | `/pt-br/` |
+| Русский | `ru` | `/ru/` |
+| 繁體中文（台灣） | `zh-TW` | `/zh-tw/` |
+
+Each homepage has matching `about/`, `privacy/`, and `terms/` pages within its directory. For example, `/fr/privacy/` is the French privacy page. Spanish uses neutral wording for readers across regions; Portuguese targets Brazil and Traditional Chinese targets Taiwan. The English brand **YT Thumbnail Downloader** stays the same in every language.
+
+`src/i18n/routes.ts` is the route registry. `src/i18n/types.ts` defines the content contract, and `src/i18n/locales/*.ts` holds the complete dictionaries for navigation, tool UI, dynamic states, FAQs, information pages, and errors. Shared templates render these dictionaries; the localized dynamic route is `src/pages/[locale]/[...page].astro`. Keep client message placeholders unchanged when editing translations.
+
+The language selector links to the same page in another language. Pages use their own canonical URL and a complete set of language alternates; `x-default` points to the corresponding English page. Search intent, keyword evidence, and the implemented homepage titles are documented in [docs/localization-seo.md](docs/localization-seo.md).
+
+Every language also has a `404.html` document in its own output directory. The postbuild step moves localized error pages into this position so Cloudflare can serve the nearest language-specific error document with HTTP 404. Error pages always remain noindex and are excluded from language alternate groups and the sitemap.
+
 ## Validation
 
 ```powershell
@@ -24,7 +49,7 @@ npm run build
 npm run audit
 ```
 
-The tests cover accepted and rejected URLs, missing high-resolution thumbnails, placeholder images, real dimensions, CORS fallback, cancellation, timeouts, and Blob cleanup. The audit checks the generated HTML and indexing configuration. Browser verification must also include a real download and responsive layouts.
+The tests cover accepted and rejected URLs, missing high-resolution thumbnails, placeholder images, real dimensions, CORS fallback, cancellation, timeouts, and Blob cleanup. Localization checks cover dictionary structure, message placeholders, routes, and sitemap generation. The audit checks all 40 public pages and 10 error documents, including static content, canonical URLs, language alternates, metadata, assets, and indexing configuration. Browser verification must also include a real download, language switching, localized status messages, and responsive layouts.
 
 Known dependency advisory (checked October 3, 2026): Astro's build dependency `http-cache-semantics@4.2.0` has an [unpatched upstream advisory](https://github.com/advisories/GHSA-ch52-4w7c-c8xp). This site does not use Astro remote image processing, server rendering, or shared application caches; the dependency is not present in the deployed static assets. The advisory remains in `npm audit`; do not use its suggested major Astro downgrade as an automatic fix. Reassess before introducing server rendering or when an upstream patch is available.
 
@@ -55,7 +80,7 @@ Wrangler uses its locally stored OAuth credentials. Do not commit credentials or
 
 `SITE_URL` and `INDEXABLE` are build-time environment variables read in `src/lib/site.ts`. The default origin is **https://www.ytthumbnaildownloader.org**, and indexing defaults to enabled only for that exact origin. `.env.example` documents the production values; export variables in the shell when changing builds. Non-production origins cannot be explicitly made indexable.
 
-The production sitemap is maintained in `public/sitemap.xml` and copied to `/sitemap.xml` during the build. It includes only the homepage, About, Privacy, and Terms pages, with absolute www URLs. The production robots.txt announces `https://www.ytthumbnaildownloader.org/sitemap.xml`. The SEO audit verifies every sitemap URL against the page canonicals. Add new indexable pages to the sitemap and audit together; do not include the 404 page or thumbnail query results.
+`scripts/postbuild.ts` generates the production `/sitemap.xml` using `src/i18n/sitemap.ts` and the shared route registry. There is no manually maintained `public/sitemap.xml`. The sitemap contains the homepage, About, Privacy, and Terms pages in all 10 languages: exactly 40 absolute www URLs, with language alternates and `x-default` for each page group. The production robots.txt announces `https://www.ytthumbnaildownloader.org/sitemap.xml`. Update the registry and dictionaries when adding pages or languages, then run validation. Do not include error documents or thumbnail query results.
 
 With indexing disabled, every HTML page has `noindex, nofollow`, `_headers` applies the same directive, robots.txt allows crawling, and no sitemap is generated. Allowing crawling lets search engines read `noindex`. Canonical and social URLs use the configured temporary origin.
 
@@ -63,10 +88,10 @@ Production domain: **https://www.ytthumbnaildownloader.org**. Its existing Cloud
 
 After a production deployment, verify:
 
-1. `/sitemap.xml` returns HTTP 200 with XML containing the four www URLs.
+1. `/sitemap.xml` returns HTTP 200 with XML containing the 40 www URLs and the correct language alternates.
 2. `/robots.txt` allows crawling and announces the production sitemap.
-3. The four public pages use www canonical URLs and have no noindex directive in their HTML or response headers.
-4. A nonexistent URL returns a real 404, with the 404 page still marked noindex.
+3. All 40 public pages use their own www canonical URLs and have no noindex directive in their HTML or response headers.
+4. A nonexistent URL under each language prefix returns a real 404 in that language, with the error page still marked noindex.
 5. Only then submit the production sitemap to Search Console if requested.
 
 The bare domain `ytthumbnaildownloader.org` is not the canonical production hostname; any future bare-domain redirect should point to www. For local noindex builds, set `INDEXABLE=false` and use `npm run build` followed by `npm run preview`; the deployment guard prevents publishing those assets over production.
@@ -83,4 +108,4 @@ The YouTube CDN filenames are an external convention and can change. The site do
 
 The standard asynchronous Microsoft Clarity snippet is included in the shared `src/layouts/Layout.astro` for project **ys07qa7u86**, so it loads across the site without an additional npm dependency. Clarity loads independently of thumbnail lookups.
 
-Clarity helps understand visitor interactions through heatmaps and session replay. It may use cookies and collect usage, device, browser, and interaction information, including page content and interactions. The public privacy page at `/privacy/` discloses this integration and links to the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement).
+Clarity helps understand visitor interactions through heatmaps and session replay. It may use cookies and collect usage, device, browser, and interaction information, including page content and interactions. Every localized Privacy page, including `/privacy/`, `/pt-br/privacy/`, and `/zh-tw/privacy/`, discloses this integration and links to the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement). Keep these disclosures consistent when changing tracking behavior; do not restore outdated claims that the site has no analytics or cookies.

@@ -1,27 +1,4 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import DocumentPage from '../components/DocumentPage.astro';
 ---
-
-<Layout
-  title="About – YT Thumbnail Downloader"
-  description="Learn how YT Thumbnail Downloader finds available YouTube thumbnail images in your browser, with no account or API key."
->
-  <section class="document-page">
-    <a class="back-link" href="/">← Back to downloader</a>
-    <p class="eyebrow">About the tool</p>
-    <h1>A simpler way to find a video’s thumbnail.</h1>
-    <p class="document-lead">YT Thumbnail Downloader helps you preview and save the thumbnail images available for a YouTube video, all from your browser.</p>
-
-    <h2>Paste a link. Choose a size.</h2>
-    <p>Use a regular YouTube video link, a youtu.be short link, a Shorts, Live, or Embed link, or an 11-character video ID. The tool checks YouTube’s image CDN for available JPG thumbnails and selects the highest resolution it can find.</p>
-    <p>Not every video has a high-resolution thumbnail. The results show each available image’s actual dimensions so you can choose a useful size without guessing.</p>
-
-    <h2>The original image, without extra steps</h2>
-    <p>Downloads use the JPG supplied by YouTube’s image CDN. The tool does not upscale, crop, or add a watermark. You do not need an account, a YouTube API key, or a browser extension.</p>
-    <p>When browser restrictions prevent a direct download, you can open the original image and save it using your browser’s image menu.</p>
-
-    <h2>Built for a small, useful job</h2>
-    <p>This is a free, independent tool for creators and anyone who needs to inspect a thumbnail. It does not download videos, retrieve private content, or grant rights to an image. See the <a href="/terms/">terms of use</a> before reusing someone else’s work.</p>
-    <p>YT Thumbnail Downloader is not affiliated with or endorsed by YouTube or Google.</p>
-  </section>
-</Layout>
+<DocumentPage locale="en" page="about" />

@@ -1,0 +1,12 @@
+import type { Locale, LocaleContent } from './types.ts';
+import en from './locales/en.ts';
+import ja from './locales/ja.ts';
+import es from './locales/es.ts';
+import fr from './locales/fr.ts';
+import de from './locales/de.ts';
+import it from './locales/it.ts';
+import ko from './locales/ko.ts';
+import pt from './locales/pt-br.ts';
+import ru from './locales/ru.ts';
+import zh from './locales/zh-tw.ts';
+export const translations: Record<Locale, LocaleContent> = { en, ja, es, fr, de, it, ko, 'pt-br': pt, ru, 'zh-tw': zh };

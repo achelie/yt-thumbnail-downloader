@@ -1,13 +1,20 @@
 ---
 import '../styles/global.css';
 import { absoluteUrl, INDEXABLE, SITE_NAME } from '../lib/site';
-interface Props { title: string; description: string; noindex?: boolean; }
-const { title, description, noindex = false } = Astro.props;
-const canonical = absoluteUrl(Astro.url.pathname);
-const isHome = Astro.url.pathname === '/';
+import { translations } from '../i18n/index';
+import { locales, pagePath } from '../i18n/routes';
+import type { Locale, PageId } from '../i18n/types';
+interface Props { title: string; description: string; locale: Locale; page: PageId; }
+const { title, description, locale, page } = Astro.props;
+const noindex = page === 'notFound';
+const canonical = absoluteUrl(pagePath(locale, page));
+const isHome = page === 'home';
+const { nav } = translations[locale];
+const config = locales.find(({ id }) => id === locale)!;
+const home = pagePath(locale);
 ---
 <!doctype html>
-<html lang="en">
+<html lang={config.lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -16,18 +23,23 @@ const isHome = Astro.url.pathname === '/';
     <meta name="description" content={description} />
     <meta name="robots" content={!INDEXABLE || noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
     <link rel="canonical" href={canonical} />
+    {!noindex && <>
+      {locales.map((alternate) => <link rel="alternate" hreflang={alternate.lang} href={absoluteUrl(pagePath(alternate.id, page))} />)}
+      <link rel="alternate" hreflang="x-default" href={absoluteUrl(pagePath('en', page))} />
+    </>}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content={config.og} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={absoluteUrl('/social-card.png')} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="YT Thumbnail Downloader — Paste a YouTube link. Get the original thumbnail." />
+    <meta property="og:image:alt" content={SITE_NAME} />
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline type="text/javascript">
       (function(c,l,a,r,i,t,y){
@@ -39,23 +51,41 @@ const isHome = Astro.url.pathname === '/';
     <slot name="head" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">{nav.skip}</a>
     <header class="site-header container">
-      <a href="/" class="brand" aria-label="YT Thumbnail Downloader home">
+      <a href={home} class="brand" aria-label={`YT Thumbnail Downloader · ${nav.home}`}>
         <svg class="brand-mark" width="31" height="31" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="3" y="4" width="23" height="18" rx="5" stroke="currentColor" stroke-width="2"/><path d="m12 9 7 4-7 4V9Z" fill="currentColor"/><path d="M10 27h13a6 6 0 0 0 6-6v-8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         <span>YT<span class="brand-light">Thumbnail</span><span class="brand-dot">.</span></span>
       </a>
-      <nav aria-label="Main navigation">
-        <a href="/" class:list={[{ active: isHome }]} aria-current={isHome ? 'page' : undefined}>Downloader</a>
-        <a href="/#how-it-works">How it works</a>
-        <a href="/#faq">FAQ</a>
+      <nav class="main-nav" aria-label={nav.mainLabel}>
+        <a href={home} class:list={[{ active: isHome }]} aria-current={isHome ? 'page' : undefined}>{nav.home}</a>
+        <a href={`${home}#how-it-works`}>{nav.how}</a>
+        <a href={`${home}#faq`}>{nav.faq}</a>
       </nav>
-      <a class="header-about" href="/about/">About <span aria-hidden="true">↗</span></a>
+      <div class="header-actions">
+        <a class="header-about" href={pagePath(locale, 'about')}>{nav.about} <span aria-hidden="true">↗</span></a>
+        <details class="language-picker">
+          <summary aria-label={`${nav.language}: ${config.name}`}><svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><ellipse cx="12" cy="12" rx="4" ry="9" stroke="currentColor" stroke-width="1.5"/><path d="M3 12h18" stroke="currentColor" stroke-width="1.5"/></svg><span lang={config.lang}>{config.name}</span><span aria-hidden="true">⌄</span></summary>
+          <ul aria-label={nav.language}>{locales.map((alternate) => <li><a href={pagePath(alternate.id, noindex ? 'home' : page)} lang={alternate.lang} hreflang={alternate.lang} aria-current={alternate.id === locale ? 'true' : undefined}>{alternate.name}{alternate.id === locale && <span class="status-dot" aria-hidden="true"></span>}</a></li>)}</ul>
+        </details>
+      </div>
     </header>
     <main id="main"><slot /></main>
     <footer class="site-footer container">
-      <div><a class="footer-brand" href="/">YT Thumbnail Downloader<span class="brand-dot">.</span></a><p>A little tool for the bigger picture.</p></div>
-      <div class="footer-right"><nav aria-label="Footer navigation"><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></nav><p>Independent tool. Not affiliated with YouTube.</p></div>
+      <div><a class="footer-brand" href={home}>YT Thumbnail Downloader<span class="brand-dot">.</span></a><p>{nav.footerTagline}</p></div>
+      <div class="footer-right"><nav aria-label={nav.footerLabel}><a href={pagePath(locale, 'about')}>{nav.about}</a><a href={pagePath(locale, 'privacy')}>{nav.privacy}</a><a href={pagePath(locale, 'terms')}>{nav.terms}</a></nav><p>{nav.disclaimer}</p></div>
     </footer>
   </body>
 </html>
+<script>
+  const picker = document.querySelector<HTMLDetailsElement>('.language-picker');
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && picker?.open) {
+      picker.open = false;
+      picker.querySelector('summary')?.focus();
+    }
+  });
+  document.addEventListener('click', (event) => {
+    if (picker?.open && event.target instanceof Node && !picker.contains(event.target)) picker.open = false;
+  });
+</script>
