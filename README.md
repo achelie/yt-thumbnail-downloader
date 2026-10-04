@@ -104,6 +104,14 @@ Downloads reuse the original Blob URL and use the filename `youtube-{id}-{width}
 
 The YouTube CDN filenames are an external convention and can change. The site does not guarantee HD availability or ownership/reuse rights. The default page makes no requests to YouTube until a lookup or example is submitted.
 
+## Publisher disclosures and contact
+
+`public/ads.txt` authorizes Google for publisher `pub-7443237558968985`. Astro copies it to `/ads.txt` during the build. This file does not enable ad serving: the site currently has no AdSense ad script or ad units.
+
+All ten Privacy pages explain the data handling that would apply if Google ads are enabled, link to Google's partner-site data explanation and My Ad Center, and disclose Cloudflare Web Analytics alongside Clarity and the image CDN. Before enabling ads, implement and verify any required consent and withdrawal controls and review which pages can show ads. Keep the current-ad-status statements accurate when changing that behavior.
+
+The public contact address is `contact@ytthumbnaildownloader.org`, defined once in `src/i18n/contact.ts`. Every footer links to it. About pages identify the operator as an independent developer and explain how to report a problem or copyright concern; Privacy pages explain how email requests are handled. Domain email forwarding is configured separately in Cloudflare Email Routing. The private destination mailbox must not be included in site content or this repository.
+
 ## Microsoft Clarity
 
 The standard asynchronous Microsoft Clarity snippet is included in the shared `src/layouts/Layout.astro` for project **ys07qa7u86**, so it loads across the site without an additional npm dependency. Clarity loads independently of thumbnail lookups.

@@ -179,6 +179,7 @@
   .document-page li + li { margin-top: 7px; }
   .document-page p a, .document-page li a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
   .document-page .button { margin-top: 24px; }
+  .document-contact a { overflow-wrap: anywhere; }
 }
 @layer responsive {
   @media (max-width: 1100px) {

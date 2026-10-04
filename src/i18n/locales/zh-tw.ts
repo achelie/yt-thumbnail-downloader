@@ -80,17 +80,19 @@ export default {
     },
     privacy: {
       title: '隱私權政策 – YT Thumbnail Downloader',
-      description: '說明影片連結、YouTube 圖片要求、Microsoft Clarity 分析、剪貼簿寫入及 Cloudflare 託管資料的處理方式。',
+      description: '說明影片連結、分析與託管資料的處理方式，以及啟用 Google AdSense 廣告時的資料使用與隱私選擇。',
       eyebrow: '隱私權政策', h1: '你的連結與資料如何處理。',
       lead: '縮圖查詢在瀏覽器中執行。本站沒有帳號或個人查詢紀錄功能。我們使用 Microsoft Clarity 瞭解訪客如何與網站互動。',
       sections: [
         { heading: '影片連結與圖片要求', paragraphs: ['瀏覽器會解析你輸入的連結，擷取 YouTube 影片 ID，並直接向 YouTube 圖片 CDN「i.ytimg.com」要求圖片，以尋找及顯示縮圖。影片 ID 會包含在每個圖片網址中。', '這些要求會讓圖片提供者接收到 IP 位址等一般連線資訊。YouTube 與 Google 依各自的隱私權政策處理其服務資料。在此貼上連結不會讓要求變成匿名。'] },
         { heading: '瀏覽器操作與剪貼簿', paragraphs: ['本工具不建立個人縮圖查詢紀錄。頁面開啟期間，目前的結果會留在頁面記憶體中。瀏覽器可能依自身設定快取圖片，或將下載檔案保留在裝置上。下方所述的分析服務也可能處理頁面內容與互動資訊。', '只有在你按下「複製圖片連結」時，工具才會把選取的圖片網址寫入剪貼簿，不會讀取剪貼簿內容。'] },
         { heading: 'Microsoft Clarity 分析', paragraphs: ['我們使用 Microsoft Clarity，透過熱區圖與工作階段重播瞭解訪客的互動情形。Clarity 可能使用 Cookie，並蒐集使用情形、裝置、瀏覽器與互動資訊，包括你瀏覽的頁面及使用方式。', 'Microsoft 依自身政策處理這些資訊，詳細內容請參閱 Microsoft 隱私權聲明。'], link: { label: 'Microsoft 隱私權聲明', url: 'https://privacy.microsoft.com/privacystatement' } },
-        { heading: '網站託管與連線資訊', paragraphs: ['本站由 Cloudflare 託管。Cloudflare 可能為了提供及保護網站，處理一般要求紀錄與連線資訊。網站託管的要求，與瀏覽器傳送至 YouTube 圖片 CDN 的縮圖要求是分開的。', '目前版本沒有廣告或登入功能。託管與分析服務提供者可能依各自的政策處理資訊。'] },
+        { heading: '網站託管與連線資訊', paragraphs: ['本站由 Cloudflare 託管。Cloudflare 可能為了提供及保護網站，處理一般要求紀錄與連線資訊。網站託管的要求，與瀏覽器傳送至 YouTube 圖片 CDN 的縮圖要求是分開的。', '我們也使用 Cloudflare Web Analytics 瞭解頁面瀏覽情形與效能，其瀏覽器端的量測信標會蒐集頁面載入時間等效能指標。本站沒有帳號或登入功能。託管與分析服務提供者依各自的政策處理資訊。'] },
+        { heading: 'Google 廣告與資料', paragraphs: ['本站目前尚未啟用 Google 廣告。若日後透過 Google AdSense 顯示廣告，Google 與其他第三方廣告服務提供者可能放置或讀取 Cookie 與本機儲存空間、使用網路信標（web beacon），並蒐集 IP 位址、裝置與瀏覽器識別碼、頁面瀏覽及廣告互動資訊。', '這些業者可能使用及分享上述資訊，以投放廣告、在允許的情況下提供個人化廣告、衡量成效及防範詐欺。他們也可能結合你造訪本站與其他網站或應用程式的資訊。Google 如何使用資料，請參閱下方說明。'], link: { label: 'Google 如何使用網站與應用程式提供的資訊', url: 'https://policies.google.com/technologies/partner-sites' } },
+        { heading: '廣告選擇與同意', paragraphs: ['你可以透過 Google「我的廣告中心」管理廣告個人化，並在瀏覽器設定中控制或刪除 Cookie。關閉個人化不代表停止使用所有 Cookie，也不代表不再顯示廣告。', '若廣告用 Cookie 或個人化廣告需要取得同意，我們會在啟用相關功能前徵得你的同意，並提供撤回同意的方式。本站目前尚未啟用 Google 廣告。'], link: { label: 'Google 我的廣告中心', url: 'https://myadcenter.google.com/' } },
         { heading: '政策更新', paragraphs: ['如果工具處理資料的方式改變，我們會更新這個頁面的說明。'] },
       ],
-      updated: '最後更新：2026 年 10 月 4 日',
+      updated: '最後更新：2026 年 10 月 5 日',
     },
     terms: {
       title: '使用條款 – YT Thumbnail Downloader',

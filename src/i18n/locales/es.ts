@@ -95,7 +95,7 @@ export default {
     },
     privacy: {
       title: 'Privacidad – YT Thumbnail Downloader',
-      description: 'Cómo se tratan los enlaces, las solicitudes de imágenes, la analítica de Microsoft Clarity, el portapapeles y los datos de alojamiento.',
+      description: 'Cómo tratamos enlaces, imágenes, analítica y datos de alojamiento, y qué datos y opciones implicaría la publicidad de Google AdSense.',
       eyebrow: 'Privacidad', h1: 'Qué ocurre cuando consultas un enlace',
       lead: 'La búsqueda de miniaturas se realiza en el navegador. El sitio no tiene cuentas ni una función de historial personal de búsquedas. Usamos Microsoft Clarity para comprender cómo interactúan los visitantes con el sitio.',
       sections: [
@@ -113,11 +113,20 @@ export default {
         ], link: { label: 'Declaración de privacidad de Microsoft', url: 'https://privacy.microsoft.com/privacystatement' } },
         { heading: 'Alojamiento y datos del sitio', paragraphs: [
           'Cloudflare aloja este sitio y puede tratar registros habituales de solicitudes e información de conexión para prestar y proteger el servicio. Las solicitudes de alojamiento son distintas de las solicitudes de miniaturas que tu navegador envía a YouTube.',
-          'Esta versión no tiene publicidad ni inicio de sesión. Los proveedores de alojamiento y analítica pueden tratar información conforme a sus propias políticas.',
+          'También usamos Cloudflare Web Analytics para conocer las visitas y medir el rendimiento del sitio, incluidos los tiempos de carga y otras métricas del navegador. Estos datos nos ayudan a detectar problemas y mejorar las páginas. El sitio no tiene cuentas ni inicio de sesión. Los proveedores de alojamiento y analítica tratan información conforme a sus propias políticas.',
         ] },
+        { heading: 'Publicidad de Google y uso de datos', paragraphs: [
+          'El sitio podría mostrar anuncios a través de Google AdSense. Actualmente no hemos activado los anuncios de Google. Si los mostramos, Google y otros proveedores o redes publicitarias podrán guardar y leer cookies, utilizar balizas web y almacenamiento local, y recopilar, recibir y utilizar datos como direcciones IP e identificadores de dispositivos o navegadores.',
+          'Estos datos pueden incluir las páginas visitadas y las interacciones con anuncios. Se utilizan para mostrar anuncios, personalizarlos cuando esté permitido y de acuerdo con tus opciones, medir su rendimiento y prevenir el fraude y los abusos. Google y sus socios pueden combinar información de las visitas a este sitio con visitas anteriores a otros sitios o aplicaciones para esos fines, según los permisos y ajustes aplicables.',
+          'La página de Google enlazada a continuación explica cómo trata la información recibida de sitios y aplicaciones que utilizan sus servicios.',
+        ], link: { label: 'Cómo utiliza Google los datos de sitios y aplicaciones asociados', url: 'https://policies.google.com/technologies/partner-sites' } },
+        { heading: 'Opciones de publicidad y consentimiento', paragraphs: [
+          'Puedes consultar las opciones de publicidad de Google y desactivar la personalización en Mi centro de anuncios. Tu navegador también permite bloquear o eliminar cookies y administrar el almacenamiento de los sitios. Desactivar la personalización no elimina todos los anuncios ni significa que dejen de utilizarse cookies u otras tecnologías para la medición, la seguridad u otros fines permitidos.',
+          'Cuando se requiera consentimiento para las cookies publicitarias o los anuncios personalizados, lo obtendremos antes de activar las funciones correspondientes y ofreceremos una forma de retirarlo. Actualmente, los anuncios de Google no están activados en este sitio.',
+        ], link: { label: 'Gestionar las opciones en Mi centro de anuncios', url: 'https://myadcenter.google.com/' } },
         { heading: 'Cambios en esta política', paragraphs: ['Si cambia la forma en que esta herramienta trata los datos, actualizaremos esta página para explicarlo.'] },
       ],
-      updated: 'Última actualización: 4 de octubre de 2026.',
+      updated: 'Última actualización: 5 de octubre de 2026.',
     },
     terms: {
       title: 'Términos de uso – YT Thumbnail Downloader',

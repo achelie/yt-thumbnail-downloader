@@ -1,11 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { translations } from '../i18n/index';
+import { CONTACT_EMAIL, CONTACT_HREF, contactContent } from '../i18n/contact';
 import { pagePath } from '../i18n/routes';
 import type { Locale, PageId } from '../i18n/types';
 interface Props { locale: Locale; page: Exclude<PageId, 'home'>; }
 const { locale, page } = Astro.props;
 const t = translations[locale];
+const contact = contactContent[locale];
 const content = page === 'notFound' ? t.notFound : t.documents[page];
 const document = page === 'notFound' ? undefined : t.documents[page];
 ---
@@ -20,6 +22,13 @@ const document = page === 'notFound' ? undefined : t.documents[page];
       {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
       {section.link && <p><a href={section.link.url} target="_blank" rel="noopener noreferrer">{section.link.label}</a></p>}
     </>)}
+    {(page === 'about' || page === 'privacy') && <section class="document-contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">{page === 'about' ? contact.heading : contact.label}</h2>
+      {page === 'about' ? <><p>{contact.operator}</p><p>{contact.intro}</p></> : <p>{contact.privacy}</p>}
+      <p><a href={CONTACT_HREF}>{CONTACT_EMAIL}</a></p>
+      {page === 'privacy' && <p>{contact.privacyUse}</p>}
+      {page === 'about' && <p>{contact.copyright}</p>}
+    </section>}
     {page !== 'notFound' && <p class="document-related"><a href={pagePath(locale, 'privacy')}>{t.nav.privacy}</a> · <a href={pagePath(locale, 'terms')}>{t.nav.terms}</a></p>}
     {document?.updated && <p class="document-updated">{document.updated}</p>}
   </section>

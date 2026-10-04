@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { absoluteUrl, INDEXABLE, SITE_NAME } from '../lib/site';
 import { translations } from '../i18n/index';
+import { CONTACT_HREF, contactContent } from '../i18n/contact';
 import { locales, pagePath } from '../i18n/routes';
 import type { Locale, PageId } from '../i18n/types';
 interface Props { title: string; description: string; locale: Locale; page: PageId; }
@@ -73,7 +74,7 @@ const home = pagePath(locale);
     <main id="main"><slot /></main>
     <footer class="site-footer container">
       <div><a class="footer-brand" href={home}>YT Thumbnail Downloader<span class="brand-dot">.</span></a><p>{nav.footerTagline}</p></div>
-      <div class="footer-right"><nav aria-label={nav.footerLabel}><a href={pagePath(locale, 'about')}>{nav.about}</a><a href={pagePath(locale, 'privacy')}>{nav.privacy}</a><a href={pagePath(locale, 'terms')}>{nav.terms}</a></nav><p>{nav.disclaimer}</p></div>
+      <div class="footer-right"><nav aria-label={nav.footerLabel}><a href={pagePath(locale, 'about')}>{nav.about}</a><a href={pagePath(locale, 'privacy')}>{nav.privacy}</a><a href={pagePath(locale, 'terms')}>{nav.terms}</a><a href={CONTACT_HREF}>{contactContent[locale].label}</a></nav><p>{nav.disclaimer}</p></div>
     </footer>
   </body>
 </html>

@@ -94,7 +94,7 @@ export default {
     },
     privacy: {
       title: 'Confidentialité – YT Thumbnail Downloader',
-      description: 'Le traitement des liens, des requêtes d’images, des analyses Microsoft Clarity, du presse-papiers et des données d’hébergement.',
+      description: 'Le traitement des liens, images, analyses et données d’hébergement, ainsi que les données et choix liés à une éventuelle publicité Google AdSense.',
       eyebrow: 'Confidentialité', h1: 'Ce qui se passe lorsque vous collez un lien',
       lead: 'La recherche de miniatures s’effectue dans votre navigateur. Le site ne propose ni compte ni historique personnel des recherches. Nous utilisons Microsoft Clarity pour comprendre les interactions des visiteurs avec le site.',
       sections: [
@@ -112,11 +112,20 @@ export default {
         ], link: { label: 'Déclaration de confidentialité de Microsoft', url: 'https://privacy.microsoft.com/privacystatement' } },
         { heading: 'Hébergement et données du site', paragraphs: [
           'Cloudflare héberge ce site et peut traiter des journaux de requêtes habituels ainsi que des informations de connexion pour fournir et sécuriser le service. Les requêtes liées à l’hébergement sont distinctes des requêtes de miniatures envoyées par votre navigateur à YouTube.',
-          'Cette version ne comporte ni publicité ni connexion à un compte. Les prestataires d’hébergement et d’analyse peuvent traiter des informations conformément à leurs propres politiques.',
+          'Nous utilisons aussi Cloudflare Web Analytics pour mesurer les visites et les performances du site, notamment le chargement des pages et d’autres indicateurs du navigateur. Ces mesures nous aident à repérer les problèmes et à améliorer les pages. Le site ne propose ni compte ni connexion. Les prestataires d’hébergement et d’analyse traitent des informations selon leurs propres politiques.',
         ] },
+        { heading: 'Publicité Google et utilisation des données', paragraphs: [
+          'Le site pourrait diffuser des annonces par l’intermédiaire de Google AdSense. Les annonces Google ne sont pas activées actuellement. Si nous en diffusons, Google et d’autres fournisseurs ou réseaux publicitaires pourront déposer et lire des cookies, utiliser des balises web et le stockage local, et collecter, recevoir et utiliser des données comme les adresses IP et les identifiants d’appareils ou de navigateurs.',
+          'Ces données peuvent comprendre les pages consultées et les interactions avec les annonces. Elles servent à diffuser des annonces, à les personnaliser lorsque cela est permis et selon vos choix, à mesurer leur efficacité et à prévenir la fraude et les abus. Google et ses partenaires peuvent rapprocher les informations sur vos visites de ce site de celles de visites antérieures d’autres sites ou applications, selon les autorisations et réglages applicables.',
+          'La page Google ci-dessous explique comment Google traite les informations reçues des sites et applications qui utilisent ses services.',
+        ], link: { label: 'Comment Google utilise les données des sites et applications partenaires', url: 'https://policies.google.com/technologies/partner-sites' } },
+        { heading: 'Choix publicitaires et consentement', paragraphs: [
+          'Mes préférences publicitaires permet de consulter vos options Google et de désactiver la personnalisation des annonces. Votre navigateur permet aussi de bloquer ou supprimer les cookies et de gérer le stockage des sites. Désactiver la personnalisation ne supprime pas toutes les annonces et ne met pas nécessairement fin à l’utilisation de cookies ou d’autres technologies pour la mesure, la sécurité ou d’autres finalités autorisées.',
+          'Lorsque les cookies publicitaires ou les annonces personnalisées nécessitent votre consentement, nous le recueillerons avant d’activer les fonctionnalités concernées et vous proposerons un moyen de le retirer. Les annonces Google ne sont pas actuellement activées sur ce site.',
+        ], link: { label: 'Gérer mes préférences publicitaires Google', url: 'https://myadcenter.google.com/' } },
         { heading: 'Mises à jour de cette politique', paragraphs: ['Si le traitement des données par cet outil change, cette page sera mise à jour pour expliquer ces changements.'] },
       ],
-      updated: 'Dernière mise à jour : le 4 octobre 2026.',
+      updated: 'Dernière mise à jour : le 5 octobre 2026.',
     },
     terms: {
       title: 'Conditions d’utilisation – YT Thumbnail Downloader',
