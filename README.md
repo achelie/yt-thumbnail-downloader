@@ -1,6 +1,6 @@
 # YT Thumbnail Downloader
 
-Browser-only YouTube thumbnail downloader built with Astro, TypeScript, and CSS, available in 10 languages. The tool, About, Privacy, and Terms pages are statically rendered in every language: 40 public pages, plus 10 localized noindex error documents. No API keys, database, server functions, or accounts. Microsoft Clarity provides visitor-interaction analytics.
+Browser-only YouTube thumbnail downloader built with Astro, TypeScript, and CSS, available in 10 languages. The tool, About, Privacy, and Terms pages are statically rendered in every language: 40 public pages, plus 10 localized noindex error documents. Thumbnail lookups need no API keys, database, application server, or accounts. Microsoft Clarity and Cloudflare Web Analytics measure site use. A separate HTTP redirect Worker normalizes insecure www requests without changing HTTPS static asset serving.
 
 ## Development
 
@@ -38,6 +38,8 @@ Each homepage has matching `about/`, `privacy/`, and `terms/` pages within its d
 
 The language selector links to the same page in another language. Pages use their own canonical URL and a complete set of language alternates; `x-default` points to the corresponding English page. Search intent, keyword evidence, and the implemented homepage titles are documented in [docs/localization-seo.md](docs/localization-seo.md).
 
+The October 5, 2026 homepage copy update keeps the tool first and adds a supported-link guide and download troubleshooting guide to all 10 languages. Each homepage contains three usage steps, a four-row size table, six link examples, three troubleshooting items, and eight expandable FAQs. The English content goal is 1,200–1,400 words, including FAQ answers; other languages preserve the information naturally without an equivalent word-count threshold. The shared `home.linkGuide` and `home.downloadHelp` content blocks are required in every dictionary.
+
 Every language also has a `404.html` document in its own output directory. The postbuild step moves localized error pages into this position so Cloudflare can serve the nearest language-specific error document with HTTP 404. Error pages always remain noindex and are excluded from language alternate groups and the sitemap.
 
 ## Validation
@@ -55,7 +57,7 @@ Known dependency advisory (checked October 3, 2026): Astro's build dependency `h
 
 ## Production Cloudflare deployment
 
-The configured Worker is `yt-thumbnail-downloader`; only static assets in `dist` are uploaded. The production custom domain is attached in `wrangler.jsonc`:
+The main Worker is `yt-thumbnail-downloader`; only static assets in `dist` are uploaded to it. The production HTTPS custom domain is attached in `wrangler.jsonc`:
 
 https://www.ytthumbnaildownloader.org
 
@@ -66,6 +68,18 @@ npm run deploy
 ```
 
 The `workers.dev` route and version preview URLs are disabled to avoid duplicate indexable hostnames. `npm run deploy` builds, audits the output, and checks the hosting configuration before uploading. It refuses preview-mode builds for the attached production domain, because those builds intentionally omit sitemap.xml and set noindex.
+
+Deploy the separate redirect Worker when creating or updating HTTP normalization:
+
+```powershell
+npm run deploy:redirect
+```
+
+This command uses `wrangler.redirect.jsonc` to deploy `yt-thumbnail-https-redirect` from `src/http-redirect.ts`, with the scheme-specific route `http://www.ytthumbnaildownloader.org/*`. It sends a permanent 301 directly to the HTTPS www URL while preserving the path and query string. The route matches HTTP only, so normal HTTPS traffic continues to use the main static asset Worker. Its `workers.dev` and version preview URLs are also disabled. The existing bare-domain zone redirect remains responsible for `ytthumbnaildownloader.org` and points directly to HTTPS www.
+
+The local OAuth session available on October 5, 2026 did not have the Single Redirect Edit permission needed to change zone redirect rules, but did support Worker deployment and routes. The HTTP-only Worker route implements normalization with those existing permissions. For future maintenance, a zone Redirect Rule can replace this Worker when suitable zone-edit access is available; that replacement is optional and must preserve the same one-hop path and query behavior.
+
+HTTP requests handled by the redirect script count toward the Workers Free account allowance of 100,000 requests per day, shared across Worker scripts. HTTPS static asset requests remain free and unlimited. See [Cloudflare’s daily request limits](https://developers.cloudflare.com/workers/platform/limits/#daily-requests) and [static asset billing](https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/). Keep the redirect route limited to HTTP so HTTPS page traffic does not invoke that script.
 
 If the local network cannot reach the Cloudflare API directly, use the existing local proxy for this shell session:
 
@@ -92,9 +106,10 @@ After a production deployment, verify:
 2. `/robots.txt` allows crawling and announces the production sitemap.
 3. All 40 public pages use their own www canonical URLs and have no noindex directive in their HTML or response headers.
 4. A nonexistent URL under each language prefix returns a real 404 in that language, with the error page still marked noindex.
-5. Only then submit the production sitemap to Search Console if requested.
+5. The HTTPS www homepage returns 200 without a redirect. HTTP www and HTTP/HTTPS bare-domain requests redirect once to the matching HTTPS www URL, preserving localized paths and query strings.
+6. Only then submit the production sitemap to Search Console if requested.
 
-The bare domain `ytthumbnaildownloader.org` is not the canonical production hostname; any future bare-domain redirect should point to www. For local noindex builds, set `INDEXABLE=false` and use `npm run build` followed by `npm run preview`; the deployment guard prevents publishing those assets over production.
+The bare domain `ytthumbnaildownloader.org` is not the canonical production hostname; preserve its existing redirect to HTTPS www. For local noindex builds, set `INDEXABLE=false` and use `npm run build` followed by `npm run preview`; the deployment guard prevents publishing those assets over production.
 
 ## Thumbnail behavior
 

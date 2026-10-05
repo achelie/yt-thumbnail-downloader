@@ -6,6 +6,13 @@ import { renderSitemap } from '../src/i18n/sitemap.ts';
 import { formatMessage } from '../src/i18n/format.ts';
 
 const placeholders = (value: string) => [...value.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+function checkHomeStrings(value: unknown, path: string): void {
+  if (typeof value === 'string') assert.ok(value.trim(), `${path} is empty`);
+  else if (Array.isArray(value)) value.forEach((item, index) => checkHomeStrings(item, `${path}[${index}]`));
+  else if (value && typeof value === 'object') {
+    for (const [key, item] of Object.entries(value)) checkHomeStrings(item, `${path}.${key}`);
+  }
+}
 test('all locales have complete nonempty UI messages and compatible placeholders', () => {
   for (const { id } of locales) {
     const content = translations[id];
@@ -18,6 +25,14 @@ test('all locales have complete nonempty UI messages and compatible placeholders
       }
     }
     assert.deepEqual(Object.keys(content.home).sort(), Object.keys(translations.en.home).sort());
+    checkHomeStrings(content.home, `${id}.home`);
+    const { linkGuide, downloadHelp } = content.home;
+    assert.deepEqual(Object.keys(linkGuide).sort(), Object.keys(translations.en.home.linkGuide).sort(), `${id} link guide fields`);
+    assert.deepEqual(Object.keys(linkGuide.rowLabels).sort(), ['embed', 'live', 'share', 'shorts', 'videoId', 'watch']);
+    assert.equal(linkGuide.paragraphs.length, 2, `${id} link guide explanations`);
+    assert.deepEqual(Object.keys(downloadHelp).sort(), Object.keys(translations.en.home.downloadHelp).sort(), `${id} download help fields`);
+    assert.equal(downloadHelp.items.length, 3, `${id} download troubleshooting`);
+    for (const item of downloadHelp.items) assert.deepEqual(Object.keys(item).sort(), ['body', 'title']);
     assert.deepEqual(Object.keys(content.client.qualities).sort(), ['high', 'maxres', 'medium', 'standard']);
     assert.equal(content.home.download, content.client.download, `${id} download label is consistent`);
     assert.equal(content.home.steps.length, 3);

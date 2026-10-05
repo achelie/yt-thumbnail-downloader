@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yt-thumbnail-https-redirect",
+  "account_id": "cd703f1d3e75982d707ed8956aaf0796",
+  "main": "src/http-redirect.ts",
+  "compatibility_date": "2026-10-03",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "http://www.ytthumbnaildownloader.org/*",
+      "zone_name": "ytthumbnaildownloader.org"
+    }
+  ]
+}

@@ -142,9 +142,23 @@
   .sizes-table td { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
   .sizes-table td:last-child, .sizes-table th:last-child { text-align: right; white-space: nowrap; }
   .tag { display: inline-block; font-size: 9px; font-weight: 650; padding: 1px 5px; border-radius: 3px; color: var(--brand); background: #f4e5d8; margin-left: 5px; vertical-align: 1px; }
-  .table-note { display: flex; gap: 8px; color: var(--muted); font-size: 11px; line-height: 1.8; margin-top: 16px; }
+  .table-note { display: flex; gap: 8px; color: var(--muted); font-size: 14px; line-height: 1.8; margin-top: 20px; }
   .table-note span { flex-shrink: 0; }
-  .size-footnote { font-size: 10px; color: var(--muted); margin-top: 13px; }
+  .size-footnote { font-size: 14px; color: var(--muted); line-height: 1.8; margin-top: 16px; }
+  .guide-section { display: grid; grid-template-columns: .9fr 1.6fr; gap: 90px; }
+  .guide-section > *, .guide-content { min-width: 0; }
+  .guide-content p { color: var(--muted); font-size: 14px; line-height: 1.85; }
+  .guide-content > p { margin-top: 20px; }
+  .link-table { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; font-size: 13px; }
+  .link-table caption { text-align: left; font-weight: 550; margin-bottom: 14px; }
+  .link-table th, .link-table td { padding: 13px 12px; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+  .link-table th:first-child { width: 26%; padding-left: 0; }
+  .link-table thead th { color: var(--muted); font-weight: 550; }
+  .link-table tbody th { font-weight: 500; }
+  .link-table td { color: var(--muted); padding-right: 0; }
+  .link-table code { font-size: 12px; word-break: break-word; }
+  .help-list > div + div { margin-top: 25px; padding-top: 25px; border-top: 1px solid var(--line); }
+  .help-list h3 { font-size: 17px; line-height: 1.5; margin-bottom: 10px; }
   .faq-section { display: grid; grid-template-columns: .9fr 1.6fr; gap: 90px; }
   .faq-section h2 { max-width: 270px; }
   .faq-list { border-top: 1px solid var(--line); }
@@ -198,7 +212,7 @@
     .section-intro > p:last-child { max-width: 450px; }
     .steps { gap: 35px; }
     .sizes-panel { gap: 40px; padding: 32px; }
-    .faq-section { gap: 40px; grid-template-columns: 1fr 1.65fr; }
+    .faq-section, .guide-section { gap: 40px; grid-template-columns: 1fr 1.65fr; }
     .result-grid { grid-template-columns: 1.35fr 1fr; }
     .result-controls { padding: 20px; }
     .preview-surface { padding: 18px; }
@@ -211,12 +225,12 @@
     .site-header nav { gap: 20px; }
     .site-header nav a { font-size: 11px; }
     .site-header nav a:first-child, .header-about { display: none; }
-    .hero { padding-top: 34px; }
+    .hero { padding-top: 34px; display: flex; flex-direction: column; }
     .hero-eyebrow { font-size: 10px; }
     .hero h1 { font-size: clamp(35px, 8vw, 44px); max-width: 470px; margin: 20px auto 0; line-height: 1.08; }
     .hero-subtitle { font-size: 18px; line-height: 1.5; max-width: 290px; margin: 15px auto 0; }
-    .hero-description { font-size: 12px; margin-top: 10px; line-height: 1.8; }
-    .tool-card { margin-top: 25px; padding: 21px 18px 15px; border-radius: 12px; }
+    .hero-description { font-size: 12px; margin-top: 20px; line-height: 1.8; order: 1; }
+    .tool-card { width: 100%; margin-top: 25px; padding: 21px 18px 15px; border-radius: 12px; }
     .tool-heading { margin-bottom: 20px; gap: 10px; }
     .tool-heading h2 { font-size: 14px; }
     .tool-heading p { font-size: 11px; margin-top: 5px; }
@@ -261,7 +275,7 @@
     .sizes-table caption { font-size: 13px; }
     .sizes-table th, .sizes-table td { padding-block: 13px; }
     .sizes-table tbody th { font-size: 12px; }
-    .faq-section { grid-template-columns: 1fr; gap: 27px; }
+    .faq-section, .guide-section { grid-template-columns: 1fr; gap: 27px; }
     .faq-section h2 { max-width: none; }
     .faq-list summary { font-size: 12px; padding-block: 18px; }
     .faq-list details > p { font-size: 12px; padding-right: 10px; }

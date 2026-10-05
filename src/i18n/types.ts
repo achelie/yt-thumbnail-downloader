@@ -11,6 +11,14 @@ export interface ClientMessages {
   found: string; foundFallback: string; copied: string; copySuccess: string; copyFailed: string; reset: string;
   qualities: Record<'maxres' | 'standard' | 'high' | 'medium', string>;
 }
+export interface LinkGuide {
+  title: string; intro: string; caption: string; typeColumn: string; exampleColumn: string;
+  rowLabels: Record<'watch' | 'share' | 'shorts' | 'live' | 'embed' | 'videoId', string>;
+  videoIdExample: string; paragraphs: string[];
+}
+export interface DownloadHelp {
+  title: string; intro: string; items: { title: string; body: string }[];
+}
 export interface LocaleContent {
   seo: { title: string; description: string };
   nav: { skip: string; home: string; how: string; faq: string; about: string; privacy: string; terms: string;
@@ -24,6 +32,7 @@ export interface LocaleContent {
     howEyebrow: string; howTitle: string; howIntro: string; steps: { title: string; body: string }[];
     sizesEyebrow: string; sizesTitle: string; sizesIntro: string; tableCaption: string;
     qualityColumn: string; sizeColumn: string; sizesNote: string; sizesFootnote: string;
+    linkGuide: LinkGuide; downloadHelp: DownloadHelp;
     faqEyebrow: string; faqTitle: string; faqIntro: string;
     faqs: { question: string; answer: string; privacyLink?: boolean }[]; privacyLink: string; closing: string;
   };

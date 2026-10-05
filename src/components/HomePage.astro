@@ -10,13 +10,21 @@ const { home: h, seo, client } = translations[locale];
 const config = locales.find(({ id }) => id === locale)!;
 const qualities = ['maxres', 'standard', 'high', 'medium'] as const;
 const sizes = ['1280 × 720', '640 × 480', '480 × 360', '320 × 180'];
+const linkExamples = [
+  { type: 'watch', example: 'youtube.com/watch?v=VIDEO_ID' },
+  { type: 'share', example: 'youtu.be/VIDEO_ID' },
+  { type: 'shorts', example: 'youtube.com/shorts/VIDEO_ID' },
+  { type: 'live', example: 'youtube.com/live/VIDEO_ID' },
+  { type: 'embed', example: 'youtube.com/embed/VIDEO_ID' },
+  { type: 'videoId', example: null },
+] as const;
 const schema = { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'YT Thumbnail Downloader', url: absoluteUrl(pagePath(locale)), inLanguage: config.lang, applicationCategory: 'MultimediaApplication', operatingSystem: 'Any', description: seo.description, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } };
 ---
 <Layout title={seo.title} description={seo.description} locale={locale} page="home">
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} />
   <section class="hero container" aria-labelledby="page-title">
     <p class="eyebrow hero-eyebrow"><span class="status-dot" aria-hidden="true"></span> {h.eyebrow}</p>
-    <h1 id="page-title">{h.h1}<span class="brand-dot">.</span></h1>
+    <h1 id="page-title">{h.h1}</h1>
     <p class="hero-subtitle">{h.subtitle}</p>
     <p class="hero-description">{h.description}</p>
 
@@ -35,8 +43,8 @@ const schema = { '@context': 'https://schema.org', '@type': 'WebApplication', na
   </section>
 
   <section id="thumbnail-results" class="results container" hidden aria-labelledby="results-title">
-    <div class="section-topline"><div><p class="eyebrow">{h.resultsEyebrow}</p><h2 id="results-title">{h.resultsTitle}<span class="brand-dot">.</span></h2></div><button id="clear-thumbnail" class="text-button" type="button">{h.clear} <span aria-hidden="true">×</span></button></div>
-    <div class="result-grid"><div class="preview-surface"><img id="thumbnail-preview" alt={h.previewAlt} /></div><div class="result-controls"><div class="result-current"><span class="eyebrow" id="thumbnail-quality"></span><p id="thumbnail-dimensions"></p><span class="file-type">{h.fileType}</span></div><div class="quality-heading">{h.chooseSize}</div><div id="quality-options" role="group" aria-label={h.chooseSize}></div><a id="download-thumbnail" class="button button-primary" href="#">{h.download}</a><div class="result-actions"><a id="open-thumbnail" href="#" target="_blank" rel="noopener noreferrer">{h.open} ↗</a><button id="copy-thumbnail-link" class="text-button" type="button">{h.copy}</button></div><p class="save-hint">{h.saveHint}</p><div id="copy-link-fallback" hidden><label for="thumbnail-link">{h.copyLabel}</label><input id="thumbnail-link" type="text" readonly /></div></div></div>
+    <div class="section-topline"><div><p class="eyebrow">{h.resultsEyebrow}</p><h2 id="results-title">{h.resultsTitle}</h2></div><button id="clear-thumbnail" class="text-button" type="button">{h.clear} <span aria-hidden="true">×</span></button></div>
+    <div class="result-grid"><div class="preview-surface"><img id="thumbnail-preview" width="1280" height="720" alt={h.previewAlt} /></div><div class="result-controls"><div class="result-current"><span class="eyebrow" id="thumbnail-quality"></span><p id="thumbnail-dimensions"></p><span class="file-type">{h.fileType}</span></div><div class="quality-heading">{h.chooseSize}</div><div id="quality-options" role="group" aria-label={h.chooseSize}></div><a id="download-thumbnail" class="button button-primary" href="#">{h.download}</a><div class="result-actions"><a id="open-thumbnail" href="#" target="_blank" rel="noopener noreferrer">{h.open} ↗</a><button id="copy-thumbnail-link" class="text-button" type="button">{h.copy}</button></div><p class="save-hint">{h.saveHint}</p><div id="copy-link-fallback" hidden><label for="thumbnail-link">{h.copyLabel}</label><input id="thumbnail-link" type="text" readonly /></div></div></div>
   </section>
 
   <section class="how-section container section-space" id="how-it-works" aria-labelledby="how-title">
@@ -46,6 +54,23 @@ const schema = { '@context': 'https://schema.org', '@type': 'WebApplication', na
 
   <section class="sizes-section container section-space" aria-labelledby="sizes-title">
     <div class="sizes-panel"><div class="sizes-intro"><p class="eyebrow">{h.sizesEyebrow}</p><h2 id="sizes-title">{h.sizesTitle}</h2><p>{h.sizesIntro}</p><div class="size-illustration" aria-hidden="true"><div class="frame-large"><span>1280 × 720</span><div class="frame-small"><span>320 × 180</span></div></div></div></div><div class="sizes-table-wrap"><table class="sizes-table"><caption>{h.tableCaption}</caption><thead><tr><th scope="col">{h.qualityColumn}</th><th scope="col">{h.sizeColumn}</th></tr></thead><tbody>{qualities.map((quality, index) => <tr><th scope="row">{client.qualities[quality]} {index === 0 && <span class="tag">HD</span>}</th><td>{sizes[index]}</td></tr>)}</tbody></table><p class="table-note"><span aria-hidden="true">ⓘ</span> {h.sizesNote}</p><p class="size-footnote">{h.sizesFootnote}</p></div></div>
+  </section>
+
+  <section class="guide-section container section-space" id="supported-links" aria-labelledby="links-title">
+    <div class="section-intro"><h2 id="links-title">{h.linkGuide.title}</h2><p>{h.linkGuide.intro}</p></div>
+    <div class="guide-content">
+      <table class="link-table">
+        <caption>{h.linkGuide.caption}</caption>
+        <thead><tr><th scope="col">{h.linkGuide.typeColumn}</th><th scope="col">{h.linkGuide.exampleColumn}</th></tr></thead>
+        <tbody>{linkExamples.map(({type, example}) => <tr><th scope="row">{h.linkGuide.rowLabels[type]}</th><td>{example ? <code>{example}</code> : h.linkGuide.videoIdExample}</td></tr>)}</tbody>
+      </table>
+      {h.linkGuide.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+    </div>
+  </section>
+
+  <section class="guide-section container section-space" id="download-help" aria-labelledby="download-help-title">
+    <div class="section-intro"><h2 id="download-help-title">{h.downloadHelp.title}</h2><p>{h.downloadHelp.intro}</p></div>
+    <div class="guide-content help-list">{h.downloadHelp.items.map(({title, body}) => <div><h3>{title}</h3><p>{body}</p></div>)}</div>
   </section>
 
   <section class="faq-section container section-space" id="faq" aria-labelledby="faq-title"><div class="section-intro"><p class="eyebrow">{h.faqEyebrow}</p><h2 id="faq-title">{h.faqTitle}</h2><p>{h.faqIntro}</p></div><div class="faq-list">{h.faqs.map(({question, answer, privacyLink}) => <details><summary>{question}<span class="faq-toggle" aria-hidden="true"></span></summary><p>{answer}{privacyLink && <> <a href={pagePath(locale, "privacy")}>{h.privacyLink}</a></>}</p></details>)}</div></section>

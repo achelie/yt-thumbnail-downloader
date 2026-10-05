@@ -70,6 +70,7 @@ for (const page of pages) {
       assert.equal(schema.inLanguage, config.lang);
       assert.equal(schema.url, absoluteUrl(page.path));
       assert.equal(schema.name, 'YT Thumbnail Downloader');
+      assert.equal(schema.description, content.seo.description, page.path + ' schema description must match its locale');
     }
   }
 
@@ -100,8 +101,46 @@ for (const page of pages) {
     assert.match(html, /"@type":"WebApplication"/);
     const staticText = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<[^>]+>/g, ' ');
     const escaped = (value: string) => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-    for (const phrase of [content.home.h1, content.home.tableCaption, ...content.home.steps.map((step) => step.title), ...content.home.faqs.map((faq) => faq.question)]) {
+    assert.equal(title, escaped(content.seo.title));
+    assert.equal(description, escaped(content.seo.description));
+    assert.ok([...content.seo.title].length <= 60, page.path + ' homepage title should fit the editorial limit');
+    assert.ok([...content.seo.description].length <= 160, page.path + ' homepage description should fit the editorial limit');
+    assert.equal(singleMeta(html, 'og:title', 'property'), title);
+    assert.equal(singleMeta(html, 'og:description', 'property'), description);
+    assert.equal(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1].trim(), escaped(content.home.h1), page.path + ' H1 must not append decoration');
+    const preview = tags(html, 'img').find((tag) => tag.id === 'thumbnail-preview');
+    assert.ok(preview, page.path + ' preview image');
+    assert.equal(preview.width, '1280');
+    assert.equal(preview.height, '720');
+    const linksHtml = html.match(/<section\b[^>]*id="supported-links"[^>]*>([\s\S]*?)<\/section>/)?.[1];
+    const helpHtml = html.match(/<section\b[^>]*id="download-help"[^>]*>([\s\S]*?)<\/section>/)?.[1];
+    assert.ok(linksHtml && helpHtml, page.path + ' guides must be static');
+    assert.equal([...linksHtml.matchAll(/<tr\b/gi)].length, 7, page.path + ' six supported-link examples plus header');
+    assert.equal([...helpHtml.matchAll(/<h3\b/gi)].length, 3, page.path + ' three troubleshooting topics');
+    for (const phrase of [content.home.h1, content.home.tableCaption,
+      ...content.home.steps.flatMap((step) => [step.title, step.body]),
+      content.home.linkGuide.title, content.home.linkGuide.intro, content.home.linkGuide.caption,
+      ...Object.values(content.home.linkGuide.rowLabels), content.home.linkGuide.videoIdExample,
+      ...content.home.linkGuide.paragraphs, content.home.downloadHelp.title, content.home.downloadHelp.intro,
+      ...content.home.downloadHelp.items.flatMap((item) => [item.title, item.body]),
+      ...content.home.faqs.flatMap((faq) => [faq.question, faq.answer])]) {
       assert.ok(staticText.includes(escaped(phrase)), page.path + ' missing static content: ' + phrase);
+    }
+    if (page.locale === 'en') {
+      assert.equal(content.seo.title.length, 58);
+      assert.equal(content.seo.description.length, 146);
+      assert.match(content.seo.description, /YT Thumbnail Downloader/);
+      assert.match(content.home.description, /^YT Thumbnail Downloader/);
+      const headings = [...html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/gi)].map((match) => match[1]);
+      assert.equal(headings.filter((heading) => /YT Thumbnail Downloader/.test(heading)).length, 2);
+      const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] ?? '';
+      const editorial = main.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+        .replace(/<section\b[^>]*id="thumbnail-results"[^>]*>[\s\S]*?<\/section>/i, '')
+        .replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, '')
+        .replace(/<[^>]+>/g, ' ').replace(/&[\w#]+;/g, ' ');
+      const words = editorial.match(/\b[a-z0-9]+(?:['’-][a-z0-9]+)*\b/gi)?.length ?? 0;
+      assert.ok(words >= 1200 && words <= 1400, `English homepage has ${words} editorial words; expected 1200–1400`);
+      console.log(`English homepage: ${words} editorial words, title ${content.seo.title.length}, description ${content.seo.description.length}.`);
     }
   }
 }

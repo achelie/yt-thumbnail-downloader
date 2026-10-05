@@ -92,10 +92,10 @@ export function initializeDownloader(): void {
     resetCopyFeedback();
     selected = thumbnail;
     preview.referrerPolicy = 'no-referrer';
-    preview.src = thumbnail.objectUrl || thumbnail.url;
-    preview.alt = formatMessage(t.previewAlt, { id: thumbnail.videoId, width: thumbnail.width, height: thumbnail.height });
     preview.width = thumbnail.width;
     preview.height = thumbnail.height;
+    preview.src = thumbnail.objectUrl || thumbnail.url;
+    preview.alt = formatMessage(t.previewAlt, { id: thumbnail.videoId, width: thumbnail.width, height: thumbnail.height });
     dimensions.textContent = `${thumbnail.width} × ${thumbnail.height}`;
     quality.textContent = t.qualities[thumbnail.quality];
     open.href = thumbnail.url;
