@@ -1,19 +1,79 @@
 # YT Thumbnail Downloader
 
-Browser-only YouTube thumbnail downloader built with Astro, TypeScript, and CSS, available in 10 languages. The tool, About, Privacy, and Terms pages are statically rendered in every language: 40 public pages, plus 10 localized noindex error documents. Thumbnail lookups need no API keys, database, application server, or accounts. Microsoft Clarity and Cloudflare Web Analytics measure site use. A separate HTTP redirect Worker normalizes insecure www requests without changing HTTPS static asset serving.
+Preview and download the available original JPG thumbnails for a YouTube video directly in your browser. Built with Astro, TypeScript, and CSS, with support for 10 languages and deployment on Cloudflare Workers Static Assets.
+
+**Production website: [https://www.ytthumbnaildownloader.org](https://www.ytthumbnaildownloader.org/)**
+
+[GitHub repository](https://github.com/achelie/yt-thumbnail-downloader) · [繁體中文工具](https://www.ytthumbnaildownloader.org/zh-tw/) · [Privacy policy](https://www.ytthumbnaildownloader.org/privacy/)
+
+## Features
+
+- Accepts YouTube watch, Shorts, live, embed, and short links, or an 11-character video ID.
+- Checks four thumbnail qualities, reads their actual dimensions, and selects the largest available image.
+- Downloads the original JPG without upscaling or cropping; offers manual saving when browser CORS restrictions prevent a direct download.
+- Rejects missing images and placeholder thumbnails, cancels superseded lookups, and applies a 12-second request deadline.
+- Runs thumbnail lookups in the browser without API keys, a database, an application server, or user accounts.
+- Includes 40 static public pages across 10 languages, localized error pages, canonical URLs, language alternates, and a generated sitemap.
+
+Paste a supported video link, load its thumbnails, then choose a size to download. Availability depends on the source video; a maximum-resolution thumbnail is not guaranteed.
+
+## Technology
+
+| Area | Technology |
+| --- | --- |
+| Static site | Astro |
+| Browser logic and build scripts | TypeScript |
+| Styling | CSS |
+| Hosting and deployment | Cloudflare Workers Static Assets and Wrangler |
+| Tests | Node.js test runner |
+| Analytics | Microsoft Clarity and Cloudflare Web Analytics |
 
 ## Development
 
 Use Node 22.12 or newer (verified with Node 22.19).
 
 ```powershell
+git clone https://github.com/achelie/yt-thumbnail-downloader.git
+cd yt-thumbnail-downloader
 npm ci
 npm run dev
 ```
 
 `npm run dev` serves the Astro development site. `npm run build` produces the production site for **https://www.ytthumbnaildownloader.org**, including sitemap.xml, hosting headers, robots.txt, a social card, and icons. `npm run preview` uses Wrangler to serve the built files locally with Cloudflare routing and headers at http://127.0.0.1:4322.
 
-Source repository: https://github.com/achelie/yt-thumbnail-downloader
+### Commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the local Astro development server. |
+| `npm run check` | Check Astro and TypeScript diagnostics. |
+| `npm test` | Run thumbnail, localization, and HTTP redirect tests. |
+| `npm run build` | Build the static site and generate hosting and SEO files in `dist/`. |
+| `npm run preview` | Serve the built site locally with Wrangler at `http://127.0.0.1:4322`. |
+| `npm run audit` | Validate built pages, metadata, assets, and indexing configuration. |
+| `npm run deploy` | Build, audit, check deployment configuration, and publish production assets. |
+| `npm run deploy:redirect` | Publish the separate HTTP-to-HTTPS redirect Worker. |
+
+### Project structure
+
+```text
+src/
+  components/       Shared tool and information-page templates
+  i18n/             Locale dictionaries, routes, and sitemap helpers
+  layouts/          Shared HTML layout and analytics integration
+  lib/              YouTube input parsing, thumbnails, and site settings
+  pages/            English and localized Astro routes
+  scripts/          Browser-side downloader UI
+  styles/           Shared CSS
+  http-redirect.ts  HTTP-to-HTTPS redirect Worker
+public/             Static assets, icons, and ads.txt
+scripts/            Postbuild, production audit, and deployment checks
+tests/              Automated tests
+docs/               Localization and SEO documentation
+astro.config.ts     Static site configuration
+wrangler.jsonc      Production static asset Worker configuration
+wrangler.redirect.jsonc  HTTP redirect Worker configuration
+```
 
 ## Languages and routes
 
