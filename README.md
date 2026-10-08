@@ -152,6 +152,8 @@ Wrangler uses its locally stored OAuth credentials. Do not commit credentials or
 
 ## Indexing configuration
 
+The shared layout declares a 96×96 PNG favicon at the stable `/favicon.png` URL for Google Search, a scalable SVG for browsers, and a 180×180 Apple touch icon. The build generates both PNG icons from `public/favicon.svg`; the audit verifies their file format, dimensions, and declarations across all pages. See [Google's favicon guidelines](https://developers.google.com/search/docs/appearance/favicon-in-search).
+
 `SITE_URL` and `INDEXABLE` are build-time environment variables read in `src/lib/site.ts`. The default origin is **https://www.ytthumbnaildownloader.org**, and indexing defaults to enabled only for that exact origin. `.env.example` documents the production values; export variables in the shell when changing builds. Non-production origins cannot be explicitly made indexable.
 
 `scripts/postbuild.ts` generates the production `/sitemap.xml` using `src/i18n/sitemap.ts` and the shared route registry. There is no manually maintained `public/sitemap.xml`. The sitemap contains the homepage, About, Privacy, and Terms pages in all 10 languages: exactly 40 absolute www URLs, with language alternates and `x-default` for each page group. The production robots.txt announces `https://www.ytthumbnaildownloader.org/sitemap.xml`. Update the registry and dictionaries when adding pages or languages, then run validation. Do not include error documents or thumbnail query results.

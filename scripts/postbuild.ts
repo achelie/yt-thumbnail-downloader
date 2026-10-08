@@ -31,7 +31,8 @@ for (const { id } of locales.filter(({ id }) => id !== 'en')) {
   await rename(`dist/${id}/404/index.html`, `dist/${id}/404.html`);
   await rmdir(`dist/${id}/404`);
 }
-await sharp('public/favicon.svg').resize(32, 32).png().toFile('dist/favicon.png');
+// Keep the PNG URL stable and exceed Google Search's recommended 48px size.
+await sharp('public/favicon.svg').resize(96, 96).png().toFile('dist/favicon.png');
 await sharp('public/favicon.svg').resize(180, 180).png().toFile('dist/apple-touch-icon.png');
 const social = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
 <rect width="1200" height="630" fill="#fafaf9"/><rect x="40" y="40" width="1120" height="550" rx="20" fill="#fff" stroke="#e5e5df"/>

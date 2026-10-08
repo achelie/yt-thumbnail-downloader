@@ -75,7 +75,9 @@ for (const page of pages) {
   }
 
   const icons = tags(html, 'link').filter((tag) => tag.rel === 'icon' || tag.rel === 'apple-touch-icon');
-  assert.ok(icons.some((tag) => tag.href === '/favicon.svg'), `${page.path} must link its favicon`);
+  assert.ok(icons.some((tag) => tag.rel === 'icon' && tag.href === '/favicon.png' && tag.type === 'image/png' && tag.sizes === '96x96'), `${page.path} must declare the 96px PNG favicon for Google Search`);
+  assert.ok(icons.some((tag) => tag.rel === 'icon' && tag.href === '/favicon.svg' && tag.type === 'image/svg+xml' && tag.sizes === 'any'), `${page.path} must declare the scalable browser favicon`);
+  assert.ok(icons.some((tag) => tag.rel === 'apple-touch-icon' && tag.href === '/apple-touch-icon.png' && tag.sizes === '180x180'), `${page.path} must declare the 180px Apple touch icon`);
   for (const icon of icons) {
     assert.ok(icon.href.startsWith('/'), 'Icons should be served locally');
     const file = await stat(new URL(icon.href.slice(1), output));
@@ -145,6 +147,13 @@ for (const page of pages) {
   }
 }
 
+
+for (const [name, size] of [['favicon.png', 96], ['apple-touch-icon.png', 180]] as const) {
+  const icon = await readFile(new URL(name, output));
+  assert.deepEqual(icon.subarray(0, 8), Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), `${name} must be a PNG`);
+  assert.equal(icon.readUInt32BE(16), size, `${name} width must match its declared size`);
+  assert.equal(icon.readUInt32BE(20), size, `${name} height must match its declared size`);
+}
 
 const social = await readFile(new URL('social-card.png', output));
 assert.deepEqual(social.subarray(0, 8), Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), 'Social card must be a PNG');
